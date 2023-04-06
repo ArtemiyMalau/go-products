@@ -65,6 +65,7 @@ func (h *Handler) RegisterHandlers(r *mux.Router) {
 
 func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) error {
 	products, err := h.s.GetProducts(context.TODO())
+	log.Println(products)
 	if err != nil {
 		return err
 	}

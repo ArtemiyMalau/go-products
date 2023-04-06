@@ -32,7 +32,6 @@ func NewService(db *sqlx.DB) *Service {
 
 // Product-related methods
 func (s *Service) GetProducts(ctx context.Context) (products []Product, err error) {
-	products = []Product{}
 	if err = s.db.SelectContext(ctx, &products, `
 	SELECT product.id, product.name, product.description, product.price, product.quantity FROM product
 	`); err != nil {
@@ -41,17 +40,18 @@ func (s *Service) GetProducts(ctx context.Context) (products []Product, err erro
 	return
 }
 
-func (s *Service) GetProductById(ctx context.Context, id int) (product Product, err error) {
-	if err = s.db.GetContext(ctx, &product, `
+func (s *Service) GetProductById(ctx context.Context, id int) (*Product, error) {
+	product := &Product{}
+	if err := s.db.GetContext(ctx, product, `
 	SELECT product.id, product.name, product.description, product.price, product.quantity FROM product
 	WHERE id = $1
 	`, id); err != nil {
 		if err == sql.ErrNoRows {
 			err = &ApiError{Err: fmt.Sprintf("Product with passed id:%v not exists", id)}
 		}
-		return
+		return nil, err
 	}
-	return
+	return product, nil
 }
 
 func (s *Service) AddProduct(ctx context.Context, dto ProductDTOAdd) (*Product, error) {
@@ -106,17 +106,18 @@ func (s *Service) GetCustomers(ctx context.Context) (customers []Customer, err e
 	return
 }
 
-func (s *Service) GetCustomerById(ctx context.Context, id int) (customer Customer, err error) {
-	if err = s.db.GetContext(ctx, &customer, `
+func (s *Service) GetCustomerById(ctx context.Context, id int) (*Customer, error) {
+	customer := &Customer{}
+	if err := s.db.GetContext(ctx, &customer, `
 	SELECT customer.id, customer.first_name, customer.last_name FROM customer
 	WHERE id = $1
 	`, id); err != nil {
 		if err == sql.ErrNoRows {
 			err = &ApiError{Err: fmt.Sprintf("Customer with passed id:%v not exists", id)}
 		}
-		return
+		return nil, err
 	}
-	return
+	return customer, nil
 }
 
 func (s *Service) AddCustomer(ctx context.Context, dto CustomerDTOAdd) (*Customer, error) {
@@ -169,7 +170,7 @@ func (s *Service) GetBills(ctx context.Context) (bills []Bill, err error) {
 	return
 }
 
-func (s *Service) GetBillById(ctx context.Context, id int) (bill BillVerbose, err error) {
+func (s *Service) GetBillById(ctx context.Context, id int) (bill *BillVerbose, err error) {
 	tx := s.db.MustBeginTx(ctx, nil)
 	err = func() error {
 		err := tx.QueryRowContext(ctx, `
@@ -201,7 +202,7 @@ func (s *Service) GetBillById(ctx context.Context, id int) (bill BillVerbose, er
 		return nil
 	}()
 	if err != nil {
-		return
+		return nil, err
 	}
 	return
 }
