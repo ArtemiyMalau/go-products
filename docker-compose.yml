@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    container_name: products_app
+    ports:
+      - ${DOCKER_HOST_APP_PORT}:8000
+    networks:
+      - net
+
+  db:
+    image: postgres
+    container_name: products_db
+    hostname: ${DB_HOST}
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - ${DOCKER_HOST_DB_PORT}:5432
+    volumes:
+     - pg-data:/var/lib/postgresql/data
+    networks:
+      - net
+
+volumes:
+  pg-data:
+    driver: local
+
+networks:
+  net:
+    driver: bridge
