@@ -19,7 +19,6 @@ func GetDBConnection(config *config) (db *sqlx.DB, err error) {
 			"postgres", fmt.Sprintf(
 				"postgresql://%s:%s@%s:%s/%s?search_path=public&sslmode=disable",
 				config.DB.Username, config.DB.Password, config.DB.Host, config.DB.Port, config.DB.Database))
-		log.Println(errInternal)
 		return
 	}, 5, time.Second*3)
 
