@@ -26,8 +26,8 @@ CREATE TABLE Bill (
 
 -- Create ProductBill pivot table
 CREATE TABLE ProductBill (
-  product_id INTEGER NOT NULL REFERENCES Product(id),
-  bill_id INTEGER NOT NULL REFERENCES Bill(id),
+  product_id INTEGER NOT NULL REFERENCES Product(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  bill_id INTEGER NOT NULL REFERENCES Bill(id) ON DELETE CASCADE ON UPDATE CASCADE,
   quantity INTEGER NOT NULL,
   PRIMARY KEY (product_id, bill_id)
 );

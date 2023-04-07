@@ -19,6 +19,9 @@ Golang implementation of Products JSON API service
 
   `docker-compose --env-file ./.env down; docker container prune; docker image rm products_app:latest; docker-compose --env-file ./.env up -d`
 
+## Testing
+To test corectness of service methods run `go test -v`
+
 ## Command-line options
 * `-migratedb` - execute [structure.sql](dbo/structure.sql) script to initialize database structure
 * `-seeddb` - execute [seeder.sql](dbo/seeder.sql) to fill database by default data

@@ -108,7 +108,7 @@ func (s *Service) GetCustomers(ctx context.Context) (customers []Customer, err e
 
 func (s *Service) GetCustomerById(ctx context.Context, id int) (*Customer, error) {
 	customer := &Customer{}
-	if err := s.db.GetContext(ctx, &customer, `
+	if err := s.db.GetContext(ctx, customer, `
 	SELECT customer.id, customer.first_name, customer.last_name FROM customer
 	WHERE id = $1
 	`, id); err != nil {
@@ -141,7 +141,7 @@ func (s *Service) AddCustomer(ctx context.Context, dto CustomerDTOAdd) (*Custome
 
 func (s *Service) UpdateCustomerById(ctx context.Context, dto CustomerDTOUpdate) error {
 	if _, err := s.db.NamedExecContext(ctx, `
-	UPDATE product
+	UPDATE customer
 	SET first_name = :first_name, last_name = :last_name
 	WHERE id = :id
 	`, &dto); err != nil {
@@ -171,6 +171,7 @@ func (s *Service) GetBills(ctx context.Context) (bills []Bill, err error) {
 }
 
 func (s *Service) GetBillById(ctx context.Context, id int) (bill *BillVerbose, err error) {
+	bill = &BillVerbose{}
 	tx := s.db.MustBeginTx(ctx, nil)
 	err = func() error {
 		err := tx.QueryRowContext(ctx, `
